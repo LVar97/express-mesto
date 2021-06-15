@@ -5,7 +5,7 @@ const ERROR_CODE_500 = 500;
 
 //создаёт пользователя
 module.exports.createUser = (req, res) => {
-
+  
   const { name, avatar, about } = req.body;
 
   User.create({ name, avatar, about })
@@ -27,22 +27,24 @@ module.exports.getUser = (req, res) => {
 
 //возвращает пользователя по _id
 module.exports.getUserId = (req, res) => {
-
-  User.findById(req.params.userId)
-  .then(user => {if(user === null ){
-    res.status(ERROR_CODE_404).send({ message: 'Запрашиваемый пользователь не найден' })
+  if(req.params.userId.length !== 24){
+    res.status(ERROR_CODE_400).send({ message: 'Переданы некорректные данные' })
   }else{
-    res.send({ data: user })
-    }
-  })
-  .catch(err => res.status(500).send({ message: 'Произошла ошибка' }))
+    User.findById(req.params.userId)
+    .then(user => {if(user === null ){
+      res.status(ERROR_CODE_404).send({ message: 'Запрашиваемый пользователь не найден' })
+    }else{
+      res.send({ data: user })
+      }
+    })
+    .catch(err => res.status(500).send({ message: 'Произошла ошибка' }))
+  }
 };
 
 // PATCH /users/me — обновляет профиль
 module.exports.patchUser = (req, res) => {
 
   const { name, about } = req.body;
-
 
   User.findById(req.user._id)
   .then(user => {if(user === null ){

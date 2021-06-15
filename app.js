@@ -14,7 +14,9 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 const { PORT = 3000 } = process.env;
 
 const app = express();
-app.use(bodyParser.urlencoded({ extended: true ,type: '*/x-www-form-urlencoded'}));
+// app.use(bodyParser.urlencoded({ extended: true ,type: '*/x-www-form-urlencoded'}));
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use( bodyParser.json());
 
 app.use((req, res, next) => {
   req.user = {
@@ -26,6 +28,12 @@ app.use((req, res, next) => {
 
 app.use('/', routerUser);
 app.use('/', routerCards);
+app.get(/.*/ , function(req, res) {
+  res.status(400).send({ message: 'Запрашиваемый ресурс не найден'});
+});
+app.post(/.*/ , function(req, res) {
+  res.status(400).send({ message: 'Запрашиваемый ресурс не найден'});
+})
 
 
 app.listen(PORT, () => {
