@@ -1,6 +1,7 @@
 const Card = require('../models/card');
 const NotFoundError = require('../errors/not-found-err');
 const IncorrectDataError = require('../errors/incorrect-data-err');
+const AccessIsDenied = require('../errors/access-is-denied');
 
 // создаёт карточку
 module.exports.createCard = (req, res, next) => {
@@ -36,7 +37,7 @@ module.exports.deleteCardId = (req, res, next) => {
         } else {
           console.log();
           if (req.user._id !== card.owner.toString()) {
-            throw new IncorrectDataError('Не ваша карточка');
+            throw new AccessIsDenied('Не ваша карточка');
           } else {
             Card.findByIdAndRemove(req.params.cardsId)
               .then(res.send({ message: 'card deleted' }));

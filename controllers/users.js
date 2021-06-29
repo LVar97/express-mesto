@@ -3,10 +3,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const NotFoundError = require('../errors/not-found-err');
 const IncorrectDataError = require('../errors/incorrect-data-err');
-
-// const ERROR_CODE_400 = 400;
-// const ERROR_CODE_404 = 404;
-// const ERROR_CODE_500 = 500;
+const NeedAuthorization = require('../errors/need-authorization');
 
 // создаёт пользователя
 module.exports.createUser = (req, res, next) => {
@@ -41,21 +38,16 @@ module.exports.getUser = (req, res, next) => {
 // возвращает пользователя по _id
 module.exports.getUserId = (req, res, next) => {
   if (req.params.userId.length !== 24) {
-    // res.status(ERROR_CODE_400).send({ message: 'Переданы некорректные данные' });
     throw new IncorrectDataError('Переданы некорректные данные');
-    // throw new IncorrectDataError('Пошел нахуй');
   } else {
     User.findById(req.params.userId)
       .then((user) => {
         if (user === null) {
-          // res.status(ERROR_CODE_404).send({ message: 'Запрашиваемый пользователь не найден' });
-          // throw new NotFoundError('Нет пользователя с таким id');
           throw new NotFoundError('Запрашиваемый пользователь не найден');
         } else {
           res.send({ data: user });
         }
       })
-      // .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
       .catch(next);
   }
 };
@@ -125,7 +117,7 @@ module.exports.login = (req, res, next) => {
     })
     .catch(() => {
       // ошибка аутентификации
-      throw new IncorrectDataError('Переданы некорректные данные');
+      throw new NeedAuthorization('Необходима авторизация');
     })
     .catch(next);
 };

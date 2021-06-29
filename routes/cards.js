@@ -19,10 +19,7 @@ router.delete('/cards/:cardsId', celebrate({
   }),
   headers: Joi.object().keys({
     // валидируем заголовки
-  }),
-  query: Joi.object().keys({
-    // валидируем query
-  }),
+  }).unknown(true),
 }), deleteCardId);
 router.put('/cards/:cardsId/likes', celebrate({
   // валидируем параметры

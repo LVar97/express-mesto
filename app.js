@@ -12,6 +12,7 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
   useCreateIndex: true,
   useFindAndModify: false,
+  useUnifiedTopology: true,
 });
 
 const { PORT = 3000 } = process.env;
@@ -31,10 +32,7 @@ app.use(auth);
 app.use('/', routerUser);
 app.use('/', routerCards);
 
-app.get(/.*/, (req, res) => {
-  res.status(404).send({ message: 'Запрашиваемый ресурс не найден' });
-});
-app.post(/.*/, (req, res) => {
+app.use(/.*/, (req, res) => {
   res.status(404).send({ message: 'Запрашиваемый ресурс не найден' });
 });
 
