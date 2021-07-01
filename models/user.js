@@ -3,11 +3,6 @@ const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
 
-const validateAvatar = function (avatar) {
-  const avatarRegex = /((http|https):\/\/)?(www\.)?([A-Za-zА-Яа-я0-9]{1}[A-Za-zА-Яа-я0-9-]*\.?)*\.{1}[A-Za-zА-Яа-я0-9-]{2,8}(\/([\w#!:.?+=&%@!\-/])*)?/g;
-  return avatarRegex.test(avatar);
-};
-
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -19,8 +14,11 @@ const userSchema = new mongoose.Schema({
     type: String,
     link: String,
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
-    validate: [validateAvatar, 'Please fill a valid avatar address'],
-    match: [/((http|https):\/\/)?(www\.)?([A-Za-zА-Яа-я0-9]{1}[A-Za-zА-Яа-я0-9-]*\.?)*\.{1}[A-Za-zА-Яа-я0-9-]{2,8}(\/([\w#!:.?+=&%@!\-/])*)?/g, 'Please fill a valid avatar address'],
+    validate: {
+      validator(avatar) {
+        return /^(https|http):\/\/(www)?[^ "]+/gim.test(avatar);
+      },
+    },
   },
   about: {
     type: String,

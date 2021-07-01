@@ -1,10 +1,5 @@
 const mongoose = require('mongoose');
 
-const validateLink = function (link) {
-  const linkRegex = /((http|https):\/\/)?(www\.)?([A-Za-zА-Яа-я0-9]{1}[A-Za-zА-Яа-я0-9-]*\.?)*\.{1}[A-Za-zА-Яа-я0-9-]{2,8}(\/([\w#!:.?+=&%@!\-/])*)?/g;
-  return linkRegex.test(link);
-};
-
 const cardSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -15,6 +10,11 @@ const cardSchema = new mongoose.Schema({
   link: {
     type: String,
     required: true,
+    validate: {
+      validator(link) {
+        return /^(https|http):\/\/(www)?[^ "]+/gim.test(link);
+      },
+    },
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
@@ -23,8 +23,6 @@ const cardSchema = new mongoose.Schema({
   likes: [{
     type: mongoose.Schema.Types.ObjectId,
     default: [],
-    validate: [validateLink, 'Please fill a valid link address'],
-    match: [/((http|https):\/\/)?(www\.)?([A-Za-zА-Яа-я0-9]{1}[A-Za-zА-Яа-я0-9-]*\.?)*\.{1}[A-Za-zА-Яа-я0-9-]{2,8}(\/([\w#!:.?+=&%@!\-/])*)?/g, 'Please fill a valid link address'],
   },
   ],
   createdAt: {
